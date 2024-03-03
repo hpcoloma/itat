@@ -17,12 +17,15 @@ SCOPED_CREDS = CREDS.with_scopes(SCOPE)
 GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
 SHEET = GSPREAD_CLIENT.open('itat')
 
+console = Console()
+
+
 def welcome_screen():
     """
     Displays logo made from ASCII art and description of the program
     """
-    print(LOGO)
-    print(DESCRIPTION)
+    console.print(LOGO, justify='center')
+    console.print(DESCRIPTION, justify='center')
 
 
 if __name__=="__main__":
