@@ -25,7 +25,9 @@ def view_stock():
     """
     index = 0
     table = Table(title='CURRENT STOCK')
+    table.add_column('No.')
     table.add_column('SKU')
+    table.add_column('Type')
     table.add_column('Added Stock')
     table.add_column('Check-out Total')
     table.add_column('Unassigned')
