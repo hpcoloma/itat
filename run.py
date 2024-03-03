@@ -19,6 +19,26 @@ SHEET = GSPREAD_CLIENT.open('itat')
 
 console = Console()
 
+def view_stock():
+    """
+    Display current inventory listing in a table format
+    """
+    index = 0
+    table = Table(title='CURRENT STOCK')
+    table.add_column('SKU')
+    table.add_column('Added Stock')
+    table.add_column('Check-out Total')
+    table.add_column('Unassigned')
+    table.add_column('% Available')
+
+    viewstock = SHEET.worksheet('CIL')
+    data = viewstock.get_all_values()
+    for row in data[1:]:
+        index += 1
+        table.add_row(str(index), *row)
+    
+    console.print(table)
+
 
 def welcome_screen():
     """
@@ -30,4 +50,4 @@ def welcome_screen():
 
 if __name__=="__main__":
     welcome_screen()
-
+    view_stock()
