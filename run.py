@@ -40,6 +40,30 @@ def view_stock():
         table.add_row(str(index), *row)
     
     console.print(table)
+    
+    admin_menu()
+
+def view_status():
+    """
+    Display check-out sheet with status of each assigned stocks
+    """
+    index = 0
+    table = Table(title='CURRENT STOCK')
+    table.add_column('No.')
+    table.add_column('Check-out Date')
+    table.add_column('SKU')
+    table.add_column('Staff')
+    table.add_column('ID')
+    table.add_column('Type')
+    
+    viewstatus = SHEET.worksheet('Check-out')
+    data = viewstatus.get_all_values()
+    for row in data[1:]:
+        index +=1
+        table.add_row(str(index), *row)
+    
+    console.print(table)
+
 
 
 def welcome_screen():
@@ -50,6 +74,16 @@ def welcome_screen():
     console.print(DESCRIPTION, justify='center')
 
 
+def admin_menu():
+    """
+    Admin menu functions
+    """
+    console.print('''
+    V - VIEW STOCK    S - VIEW STATUS   A - ADD STOCK   E - EXIT
+    ''', justify='center')
+
+
 if __name__=="__main__":
     welcome_screen()
     view_stock()
+    view_status()
