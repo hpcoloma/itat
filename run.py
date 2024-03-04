@@ -24,12 +24,10 @@ SHEET = GSPREAD_CLIENT.open('itat')
 
 console = Console()
 
-def view_stock():
+def current_stock():
     """
     Display current inventory listing in a table format
     """
-    clear_screen()
-
     index = 0
     table = Table(title='CURRENT STOCK')
     table.add_column('No.')
@@ -37,7 +35,7 @@ def view_stock():
     table.add_column('Type')
     table.add_column('Added Stock')
     table.add_column('Check-out Total')
-    table.add_column('Unassigned')
+    table.add_column('[red]Unassigned')
     table.add_column('% Available')
 
     viewstock = SHEET.worksheet('CIL')
@@ -47,15 +45,17 @@ def view_stock():
         table.add_row(str(index), *row)
     
     console.print(table, justify='center')
+
+def view_stock():
     
+    clear_screen()
+    current_stock() 
     admin_menu()
 
-def view_status():
+def current_status():
     """
     Display check-out sheet with status of each assigned stocks
     """
-    clear_screen()
-
     index = 0
     table = Table(title='ASSIGNED STOCK')
     table.add_column('No.')
@@ -72,6 +72,10 @@ def view_status():
         table.add_row(str(index), *row[:5])
     
     console.print(table, justify='center')
+
+def view_status():
+    clear_screen()
+    current_status()
     admin_menu()
 
 class StockItem():
@@ -165,6 +169,31 @@ def add_stock_user_input():
     time.sleep(5) # Pause for 5 seconds delay
     view_stock() # Displays updated stock.
 
+
+
+def edit_stock():
+    clear_screen()
+    console.print("EDIT STOCK", justify='center')
+    console.print("""
+    U - UNASSIGN STOCK
+    A - ASSIGN STOCK
+    """, justify='center')
+
+def unassign_stock():
+    clear_screen()
+    current_stock()
+ 
+
+def assign_stock():
+    clear_screen()
+    current_status()
+
+
+
+
+
+
+
 def welcome_screen():
     """
     Displays logo made from ASCII art and description of the program
@@ -202,9 +231,9 @@ def admin_menu():
     elif admin_menu_input == ("a"):
         add_stock_user_input()
     elif admin_menu_input == ("e"):
-        welcome_screen()
+        edit_stock()
     elif admin_menu_input == ("b"):
-        welcome_screen()
+        assign_stock()
     elif admin_menu_input == ("r"):
         welcome_screen()
     elif admin_menu_input == ("q"):
@@ -212,7 +241,7 @@ def admin_menu():
 
 def clear_screen():
     """
-    Clears the terminal window peior to new content.
+    Clears the terminal window prior to new content.
     Recommended to me by my mentor, Matt Bodden
     """
     os.system('cls' if os.name == 'nt' else 'clear')
