@@ -7,6 +7,7 @@ from rich.console import Console
 from rich.table import Table
 import os
 from datetime import datetime
+import time
 
 SCOPE = [
     "https://www.googleapis.com/auth/spreadsheets",
@@ -14,8 +15,10 @@ SCOPE = [
     "https://www.googleapis.com/auth/drive"
     ]
 
+
 CREDS = Credentials.from_service_account_file('creds.json')
 SCOPED_CREDS = CREDS.with_scopes(SCOPE)
+# Open the google sheets documents
 GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
 SHEET = GSPREAD_CLIENT.open('itat')
 
@@ -75,49 +78,92 @@ class StockItem():
     """
     Create new stock items base on user input of date, type and quantity
     """
-    def __init__(self, date, item_type, quantity):
+    def __init__(self, date, stock_type, quantity):
         self.date = date
-        self.item_type = item_type
+        self.stock_type = stock_type
         self.quantity = quantity
 
     def display_info(self):
-        return f"Date: {self.date}, Type: {self.item_type}, Quantity: {self.quantity}"
+        return f"Date: {self.date}, Type: {self.stock_type}, Quantity: {self.quantity}"
 
-def validate_date(date_str):
+# Get the sheet where the stocks will be added
+sheet = SHEET.worksheet('Add Stock')
+
+def add_stock(date, stock_type, quantity):
+    """
+    Function to add new stock
+    """
+    sheet.append_row([date, stock_type, quantity])
+
+# Function to validate date
+def validate_date(date):
     try:
-        datetime.strptime(date_str, '%d/%m/%Y')
+        datetime.strptime(date, '%d/%m/%Y')
         return True
     except ValueError:
         return False
 
-def add_stock():
+source_sheet = SHEET.worksheet('source')
+
+# Get the valid stock types from the first column in the source sheet
+valid_stock_types = source_sheet.col_values(1)
+
+# Function to validate stock type
+def validate_stock_type(stock_type):
+    return stock_type.lower() in[stock.lower() for stock in valid_stock_types]
+
+def add_stock_user_input():
     """
-    Checks user input type and quantity
-    if valid adds the data to the spreadsheet
+    Function to take date, type and quantity input by user
+    If valid, adds new stock to the sheet 
     """
     clear_screen()
     index = 0
     table = Table(title='')
     table.add_column('No.')
     table.add_column('Type')
-    
+
+    # Source sheet from which to retrieve valid item types
     stock_type = SHEET.worksheet('source')
+ 
+    # Creates a table to display all stock type from source sheet
     data = stock_type.get_all_values()
     for row in data[1:]:
         index +=1
         table.add_row(str(index), *row[:1])
 
+    console.print("STOCK TYPE", justify='center')
     console.print(table, justify='center')
+    print("ADD STOCK:")
 
     while True:
-        date_input = input("Enter date (DD/MM/YYY): ").strip()
-        if not validate_date(date_input):
+        date = input("Enter check-in date (DD/MM/YYY): ").strip()
+        if validate_date(date):
+            break
+        else:
             print("Invalid date format. Please enter the date in DD/MM/YYY format.")
-        continue
 
-        item_type_input = input("Enter stock type: ")
+    while True:
+        stock_type = input("Enter stock type: ").strip()
+        if validate_stock_type(stock_type):
+            break
+        else:
+            print("Invalid stock type. Please choose from the table above.")
+                        
+    while True:
+        quantity_input = input("Enter quantity: ").strip()
+        if quantity_input.isdigit():
+           quantity = int(quantity_input)
+           break
+        else:
+           print("Invalid quantity. Please enter a valid number.")
 
-    admin_menu()
+    print("""
+    STOCK ITEM ADDED SUCCESSFULLY!
+    """)
+    add_stock(date, stock_type, quantity)
+    time.sleep(5) # Pause for 5 seconds delay
+    view_stock() # Displays updated stock.
 
 def welcome_screen():
     """
@@ -137,9 +183,9 @@ def admin_menu():
     console.print("""
     [bold]
     C.O.M.M.A.N.D   C.E.N.T.E.R
-        V - VIEW STOCK      A - ADD STOCK    B - BOOK REQUEST  
-         S - VIEW STATUS     E - EDIT STOCK   R - REVIEW REQUEST
-        Q - QUIT
+    V - VIEW STOCK      A - ADD STOCK    B - BOOK REQUEST  
+     S - VIEW STATUS     E - EDIT STOCK   R - REVIEW REQUEST
+    Q - QUIT
     """, justify='center')
 
     while True:
@@ -154,7 +200,7 @@ def admin_menu():
     elif admin_menu_input == ("s"):
         view_status()
     elif admin_menu_input == ("a"):
-        add_stock()
+        add_stock_user_input()
     elif admin_menu_input == ("e"):
         welcome_screen()
     elif admin_menu_input == ("b"):
@@ -175,5 +221,4 @@ def clear_screen():
 
 if __name__=="__main__":
     welcome_screen()
-    #view_stock()
-    #view_status()
+    
