@@ -1,13 +1,15 @@
 # Write your code to expect a terminal of 80 characters wide and 24 rows high
 import gspread
+import time
+import re
+import os
+
 from google.oauth2.service_account import Credentials
 from file_texts import LOGO, DESCRIPTION
-import re
 from rich.console import Console
 from rich.table import Table
-import os
 from datetime import datetime
-import time
+
 
 SCOPE = [
     "https://www.googleapis.com/auth/spreadsheets",
@@ -22,9 +24,15 @@ SCOPED_CREDS = CREDS.with_scopes(SCOPE)
 GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
 SHEET = GSPREAD_CLIENT.open('itat')
 
+
 console = Console()
 
+# Get the sheet where the stocks will be added
+sheet = SHEET.worksheet('Add Stock')
+
+#Get the sheet for current stocks
 viewstock = SHEET.worksheet('CIL')
+
 
 def current_stock():
     """
@@ -39,20 +47,24 @@ def current_stock():
     table.add_column('Check-out Total')
     table.add_column('[red]Unassigned')
     table.add_column('% Available')
-
-    #viewstock = SHEET.worksheet('CIL')
+    
     data = viewstock.get_all_values()
     for row in data[1:]:
         index += 1
+        # To capitalize the text under the Type column
+        row[1] = row[1].capitalize()
         table.add_row(str(index), *row)
     
     console.print(table, justify='center')
+    print(row[1])
+
 
 def view_stock():
     
     clear_screen()
     current_stock() 
     admin_menu()
+
 
 def current_status():
     """
@@ -75,10 +87,12 @@ def current_status():
     
     console.print(table, justify='center')
 
+
 def view_status():
     clear_screen()
     current_status()
     admin_menu()
+
 
 class StockItem():
     """
@@ -92,14 +106,13 @@ class StockItem():
     def display_info(self):
         return f"Date: {self.date}, Type: {self.stock_type}, Quantity: {self.quantity}"
 
-# Get the sheet where the stocks will be added
-sheet = SHEET.worksheet('Add Stock')
 
 def add_stock(date, stock_type, quantity):
     """
     Function to add new stock
     """
     sheet.append_row([date, stock_type, quantity])
+
 
 # Function to validate date
 def validate_date(date):
@@ -109,15 +122,19 @@ def validate_date(date):
     except ValueError:
         return False
 
+
 # Get the sheet where to pull the stock types 
 source_sheet = SHEET.worksheet('source')
+
 
 # Get the valid stock types from the first column in the source sheet
 valid_stock_types = source_sheet.col_values(1)
 
+
 # Function to validate stock type
 def validate_stock_type(stock_type):
     return stock_type.lower() in[stock.lower() for stock in valid_stock_types]
+
 
 def add_stock_user_input():
     """
@@ -126,7 +143,7 @@ def add_stock_user_input():
     """
     clear_screen()
     index = 0
-    table = Table(title='')
+    table = Table(title='[bold]STOCK TYPE')
     table.add_column('No.')
     table.add_column('Type')
 
@@ -139,9 +156,9 @@ def add_stock_user_input():
         index +=1
         table.add_row(str(index), *row[:1])
 
-    console.print("STOCK TYPE", justify='center')
+    #console.print("", justify='center')
     console.print(table, justify='center')
-    print("ADD STOCK:")
+    console.print("[bold]ADD STOCK:")
 
     while True:
         date = input("Enter check-in date (DD/MM/YYY): ").strip()
@@ -164,22 +181,29 @@ def add_stock_user_input():
            break
         else:
            print("Invalid quantity. Please enter a valid number.")
-
-    print("""
-    STOCK ITEM ADDED SUCCESSFULLY!
-    """)
+    
     add_stock(date, stock_type, quantity)
-    time.sleep(5) # Pause for 5 seconds delay
+    console.print("[bold][red]UPDATING STOCK...", justify='center')
+
+    time.sleep(2) # Pause for 2 seconds delay
+
+    console.print("[bold][red]STOCK ITEM ADDED SUCCESSFULLY!", justify='center')
+    
+    time.sleep(2) # Pause for 2 seconds delay
     view_stock() # Displays updated stock.
 
+
 # CIL sheet where to pull the sku. Previously called as viewstock
+
 
 # Get the valid sku from the first column in the CIL sheet
 valid_sku = viewstock.col_values(1)
 
+
 # Function to validate the sku
 def validate_sku(sku):
     return sku.lower() in[sku.lower() for sku in valid_sku]
+
 
 def edit_stock():
     clear_screen()
@@ -205,14 +229,12 @@ def edit_stock():
 
 def unassign_stock():
     clear_screen()
-
     current_status()
  
 
 def assign_stock():
     clear_screen()
     current_stock()
-    
 
     while True:
         date = input("Enter check-in date (DD/MM/YYY): ").strip()
@@ -242,7 +264,6 @@ def welcome_screen():
     """
     console.print(LOGO, justify='center')
     console.print(DESCRIPTION, justify='center')
-    
     admin_menu()
 
 
@@ -251,15 +272,14 @@ def admin_menu():
     Admin menu functions where input will be validated base on the letter assigned
     for each menu option
     """
-    console.print("""
-    [bold]C.O.M.M.A.N.D   C.E.N.T.E.R
+    console.print("""[bold]C.O.M.M.A.N.D   C.E.N.T.E.R
     V - VIEW STOCK      A - ADD STOCK    B - BOOK REQUEST  
      S - VIEW STATUS     E - EDIT STOCK   R - REVIEW REQUEST
     Q - QUIT
     """, justify='center')
 
     while True:
-        admin_menu_input = input("\n").strip().lower()
+        admin_menu_input = input("Enter Command Letter: ").strip().lower()
         if admin_menu_input not in ("v","s","q","a","e","b","r"):
             print("Invalid input. Please enter the correct letter.")
         else:
@@ -280,12 +300,14 @@ def admin_menu():
     elif admin_menu_input == ("q"):
         clear_screen()
 
+
 def clear_screen():
     """
     Clears the terminal window prior to new content.
     Recommended to me by my mentor, Matt Bodden
     """
     os.system('cls' if os.name == 'nt' else 'clear')
+
 
 if __name__=="__main__":
     welcome_screen()
