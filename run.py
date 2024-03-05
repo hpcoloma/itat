@@ -24,12 +24,14 @@ SHEET = GSPREAD_CLIENT.open('itat')
 
 console = Console()
 
+viewstock = SHEET.worksheet('CIL')
+
 def current_stock():
     """
     Display current inventory listing in a table format
     """
     index = 0
-    table = Table(title='CURRENT STOCK')
+    table = Table(title='[bold]CURRENT STOCK')
     table.add_column('No.')
     table.add_column('SKU')
     table.add_column('Type')
@@ -38,7 +40,7 @@ def current_stock():
     table.add_column('[red]Unassigned')
     table.add_column('% Available')
 
-    viewstock = SHEET.worksheet('CIL')
+    #viewstock = SHEET.worksheet('CIL')
     data = viewstock.get_all_values()
     for row in data[1:]:
         index += 1
@@ -57,7 +59,7 @@ def current_status():
     Display check-out sheet with status of each assigned stocks
     """
     index = 0
-    table = Table(title='ASSIGNED STOCK')
+    table = Table(title='[bold]ASSIGNED STOCK')
     table.add_column('No.')
     table.add_column('Check-out Date')
     table.add_column('SKU')
@@ -107,6 +109,7 @@ def validate_date(date):
     except ValueError:
         return False
 
+# Get the sheet where to pull the stock types 
 source_sheet = SHEET.worksheet('source')
 
 # Get the valid stock types from the first column in the source sheet
@@ -169,29 +172,68 @@ def add_stock_user_input():
     time.sleep(5) # Pause for 5 seconds delay
     view_stock() # Displays updated stock.
 
+# CIL sheet where to pull the sku. Previously called as viewstock
 
+# Get the valid sku from the first column in the CIL sheet
+valid_sku = viewstock.col_values(1)
+
+# Function to validate the sku
+def validate_sku(sku):
+    return sku.lower() in[sku.lower() for sku in valid_sku]
 
 def edit_stock():
     clear_screen()
-    console.print("EDIT STOCK", justify='center')
+    console.print("[bold]EDIT STOCK", justify='center')
     console.print("""
-    U - UNASSIGN STOCK
-    A - ASSIGN STOCK
+    [bold]
+    A - ASSIGN STOCK    U - UNASSIGN STOCK    
     """, justify='center')
+
+    while True:
+        edit_stock_input = input("\n").strip().lower()
+        if edit_stock_input not in ("a", "u"):
+            print("Please enter A or U.")
+        else:
+            break   
+       
+    if edit_stock_input == ("u"):
+        unassign_stock()
+    elif edit_stock_input == ("a"):
+        assign_stock()        
+
+    #admin_menu()
 
 def unassign_stock():
     clear_screen()
-    current_stock()
+
+    current_status()
  
 
 def assign_stock():
     clear_screen()
-    current_status()
+    current_stock()
+    
 
-
-
-
-
+    while True:
+        date = input("Enter check-in date (DD/MM/YYY): ").strip()
+        if validate_date(date):
+            break
+        else:
+            print("Invalid date format. Please enter the date in DD/MM/YYY format.")
+    
+    while True:
+        sku = input("Enter SKU: ").strip()
+        if validate_sku(sku):
+            break
+        else:
+            print("Invalid SKU. Please choose from the table above.")
+    
+    while True:
+        staff_name_input = input("Enter Staff Full Name: ").strip()
+        if (x.isalpha() or x.isspace() for x in staff_name_input): # wont accept space
+            break
+        else:
+            print("Please enter a valid name.")
 
 
 def welcome_screen():
@@ -210,8 +252,7 @@ def admin_menu():
     for each menu option
     """
     console.print("""
-    [bold]
-    C.O.M.M.A.N.D   C.E.N.T.E.R
+    [bold]C.O.M.M.A.N.D   C.E.N.T.E.R
     V - VIEW STOCK      A - ADD STOCK    B - BOOK REQUEST  
      S - VIEW STATUS     E - EDIT STOCK   R - REVIEW REQUEST
     Q - QUIT
@@ -245,8 +286,6 @@ def clear_screen():
     Recommended to me by my mentor, Matt Bodden
     """
     os.system('cls' if os.name == 'nt' else 'clear')
-
-
 
 if __name__=="__main__":
     welcome_screen()
