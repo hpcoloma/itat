@@ -33,6 +33,9 @@ sheet = SHEET.worksheet('Add Stock')
 #Get the sheet for current stocks
 viewstock = SHEET.worksheet('CIL')
 
+# Get the sheet to view current assigned stock
+viewstatus = SHEET.worksheet('Assigned')
+
 
 def current_stock():
     """
@@ -44,7 +47,7 @@ def current_stock():
     table.add_column('SKU')
     table.add_column('Type')
     table.add_column('Added Stock')
-    table.add_column('Check-out Total')
+    table.add_column('Assigned')
     table.add_column('[red]Unassigned')
     table.add_column('% Available')
     
@@ -56,7 +59,6 @@ def current_stock():
         table.add_row(str(index), *row)
     
     console.print(table, justify='center')
-    print(row[1])
 
 
 def view_stock():
@@ -79,7 +81,6 @@ def current_status():
     table.add_column('ID')
     table.add_column('Type')
     
-    viewstatus = SHEET.worksheet('Check-out')
     data = viewstatus.get_all_values()
     for row in data[1:]:
         index +=1
@@ -105,11 +106,6 @@ class StockItem():
 
     def display_info(self):
         return f"Date: {self.date}, Type: {self.stock_type}, Quantity: {self.quantity}"
-
-class AssignStock():
-    """
-    Add records to curre
-    """
 
 
 def add_stock(date, stock_type, quantity):
@@ -161,7 +157,6 @@ def add_stock_user_input():
         index +=1
         table.add_row(str(index), *row[:1])
 
-    #console.print("", justify='center')
     console.print(table, justify='center')
     console.print("[bold]ADD STOCK:")
 
@@ -196,9 +191,6 @@ def add_stock_user_input():
     
     time.sleep(2) # Pause for 2 seconds delay
     view_stock() # Displays updated stock.
-
-
-# CIL sheet where to pull the sku. Previously called as viewstock
 
 
 # Get the valid sku from the first column in the CIL sheet
@@ -240,12 +232,28 @@ def unassign_stock():
     current_status()
  
 
+# Function to validate staff name
+def validate_name(prompt, max_length):
+    while True:
+        value = input(prompt).strip()
+        if len(value) <= max_length and value.isalpha or "'" in value:
+            return value
+        else:
+            print("Please enter letters only and length is within", max_length, "characters.")
+
+
+console.print("[bold]ASSIGN STOCK")
+
+
 def assign_stock():
     clear_screen()
     current_stock()
 
+    max_length = 10
+
+
     while True:
-        date = input("Enter check-in date (DD/MM/YYY): ").strip()
+        date = input("Enter Date (DD/MM/YYY): ").strip()
         if validate_date(date):
             break
         else:
@@ -258,13 +266,25 @@ def assign_stock():
         else:
             print("Invalid SKU. Please choose from the table above.")
     
-    while True:
-        staff_name_input = input("Enter Staff Full Name: ").strip()
-        if (x.isalpha() or x.isspace() for x in staff_name_input): # wont accept space
-            break
-        else:
-            print("Please enter a valid name.")
+    # Get staff first name
+    fname = validate_name("Enter Staff First Name: ", max_length)
 
+    lname = validate_name("Enter Staff Last Name: ", max_length) #ACCEPTING NUMBERS.. CHECK
+    
+    staff_name = f"{fname} {lname}"
+    
+    #Append Assigned sheet
+    viewstatus.append_row([date, sku, staff_name])
+    
+    console.print("[bold][red]STOCK ASSIGNED SUCCESSFULLY!", justify='center')
+
+    time.sleep(2) # Pause for 2 seconds delay
+
+    clear_screen()
+
+    view_status() #Display updated assigned dock
+
+    
 
 def welcome_screen():
     """
@@ -280,10 +300,9 @@ def admin_menu():
     Admin menu functions where input will be validated base on the letter assigned
     for each menu option
     """
-    console.print("""[bold]C.O.M.M.A.N.D   C.E.N.T.E.R
-    V - VIEW STOCK      A - ADD STOCK    B - BOOK REQUEST  
-     S - VIEW STATUS     E - EDIT STOCK   R - REVIEW REQUEST
-    Q - QUIT
+    console.print("[bold][red]C.O.M.M.A.N.D   C.E.N.T.E.R", justify='center')
+    console.print("""[bold]V - VIEW STOCK     S - VIEW STATUS     A - ADD STOCK       E - EDIT STOCK      
+    B - BOOK REQUEST       R - REVIEW REQUEST      Q - QUIT
     """, justify='center')
 
     while True:
