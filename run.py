@@ -106,6 +106,11 @@ class StockItem():
     def display_info(self):
         return f"Date: {self.date}, Type: {self.stock_type}, Quantity: {self.quantity}"
 
+class AssignStock():
+    """
+    Add records to curre
+    """
+
 
 def add_stock(date, stock_type, quantity):
     """
@@ -209,23 +214,26 @@ def edit_stock():
     clear_screen()
     console.print("[bold]EDIT STOCK", justify='center')
     console.print("""
-    [bold]
-    A - ASSIGN STOCK    U - UNASSIGN STOCK    
+    [bold]A - ASSIGN STOCK    U - UNASSIGN STOCK    M - MENU    Q - QUIT   
     """, justify='center')
 
     while True:
-        edit_stock_input = input("\n").strip().lower()
-        if edit_stock_input not in ("a", "u"):
-            print("Please enter A or U.")
+        edit_stock_input = input("Enter Command Letter: ").strip().lower()
+        if edit_stock_input not in ("a", "u", "m", "q"):
+            print("Please enter A, U, M, Q")
         else:
             break   
        
     if edit_stock_input == ("u"):
         unassign_stock()
     elif edit_stock_input == ("a"):
-        assign_stock()        
+        assign_stock()
+    elif edit_stock_input == ("q"):
+        clear_screen()
+    else:
+        clear_screen()
+        admin_menu()
 
-    #admin_menu()
 
 def unassign_stock():
     clear_screen()
