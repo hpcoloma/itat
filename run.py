@@ -27,13 +27,13 @@ SHEET = GSPREAD_CLIENT.open('itat')
 
 console = Console()
 
-# Get the sheet where the stocks will be added
+# Accessing Add Stock worksheet where new stock will be added
 sheet = SHEET.worksheet('Add Stock')
 
-#Get the sheet for current stocks
+#Accessing the CIL worksheet
 viewstock = SHEET.worksheet('CIL')
 
-# Get the sheet to view current assigned stock
+# Accessing the Assigned worksheet
 viewstatus = SHEET.worksheet('Assigned')
 
 
@@ -56,6 +56,8 @@ def current_stock():
         index += 1
         # To capitalize the text under the Type column
         row[1] = row[1].capitalize()
+        # To convert SKU column to uppercase
+        row[0] = row[0].upper()
         table.add_row(str(index), *row)
     
     console.print(table, justify='center')
@@ -84,6 +86,8 @@ def current_status():
     data = viewstatus.get_all_values()
     for row in data[1:]:
         index +=1
+        # To convert SKU column to uppercase
+        row[1] = row[1].upper()
         table.add_row(str(index), *row[:5])
     
     console.print(table, justify='center')
@@ -242,7 +246,7 @@ def validate_name(prompt, max_length):
             print("Please enter letters only and length is within", max_length, "characters.")
 
 
-console.print("[bold]ASSIGN STOCK")
+
 
 
 def assign_stock():
@@ -251,6 +255,7 @@ def assign_stock():
 
     max_length = 10
 
+    console.print("[bold]ASSIGN STOCK")
 
     while True:
         date = input("Enter Date (DD/MM/YYY): ").strip()
