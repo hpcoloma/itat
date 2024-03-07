@@ -311,7 +311,7 @@ def admin_menu():
     """, justify='center')
 
     while True:
-        admin_menu_input = input("Enter Command Letter: ").strip().lower()
+        admin_menu_input = input("Enter Command Letter:").strip().lower()
         if admin_menu_input not in ("v","s","q","a","e","b","r"):
             print("Invalid input. Please enter the correct letter.")
         else:
