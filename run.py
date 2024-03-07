@@ -64,8 +64,8 @@ def current_stock():
 
 
 def view_stock():
-    
     clear_screen()
+    app_name()
     current_stock() 
     admin_menu()
 
@@ -95,6 +95,7 @@ def current_status():
 
 def view_status():
     clear_screen()
+    app_name()
     current_status()
     admin_menu()
 
@@ -147,6 +148,7 @@ def add_stock_user_input():
     If valid, adds new stock to the sheet 
     """
     clear_screen()
+    app_name()
     index = 0
     table = Table(title='[bold]STOCK TYPE')
     table.add_column('No.')
@@ -208,6 +210,11 @@ def validate_sku(sku):
 
 def edit_stock():
     clear_screen()
+    app_name()
+    edit_stock_menu()
+
+
+def edit_stock_menu():
     console.print("[bold]EDIT STOCK", justify='center')
     console.print("""
     [bold]A - ASSIGN STOCK    U - UNASSIGN STOCK    M - MENU    Q - QUIT   
@@ -228,13 +235,9 @@ def edit_stock():
         clear_screen()
     else:
         clear_screen()
+        app_name()
         admin_menu()
 
-
-def unassign_stock():
-    clear_screen()
-    current_status()
- 
 
 # Function to validate staff name
 def validate_name(prompt, max_length):
@@ -246,11 +249,9 @@ def validate_name(prompt, max_length):
             print("Please enter letters only and length is within", max_length, "characters.")
 
 
-
-
-
 def assign_stock():
     clear_screen()
+    app_name()
     current_stock()
 
     max_length = 10
@@ -289,8 +290,52 @@ def assign_stock():
 
     view_status() #Display updated assigned dock
 
-    
 
+#Get valid stock ID from the assigned sheet
+valid_id = viewstatus.col_values(4)
+
+#Function to validate ID
+def validate_id(stock_id):
+    return stock_id.lower() in [stock_id.lower() for stock_id in valid_id]
+
+
+def unassign_stock():
+    clear_screen()
+    app_name()
+    current_status()
+    
+    while True:
+        stock_id = input("\nEnter the stock ID you want to unassign: ").strip()
+
+        #Validate stock id entered   
+        if validate_id(stock_id):
+            break
+        else:
+            print("Invalid ID. Please enter a valid ID.")
+
+def delete_assigned_stock(stock_id):
+    # Get the row index of the given ID
+    data = viewstatus.get_all_values()
+    stock_ids =  [row[3] for row in data[1:]]
+    try:
+        row_index = stock_ids.index(stock_id) + 2
+        
+        print(row_index)
+    except ValueError:
+        print(f"Stock with ID {stock_id} is not assigned.")
+        return
+    
+    
+    clear_screen()
+
+
+
+    # Delete the first three rows of the Assigned sheet base on the given ID
+    #viewstatus.delete_rows(2,3)
+
+    #print(f"Stock ID: {stock_id} has been successfully unassigned.")   
+
+    
 def welcome_screen():
     """
     Displays logo made from ASCII art and description of the program
@@ -326,9 +371,9 @@ def admin_menu():
     elif admin_menu_input == ("e"):
         edit_stock()
     elif admin_menu_input == ("b"):
-        assign_stock()
+        assign_stock() # CHANGE TO BOOK REQUEST
     elif admin_menu_input == ("r"):
-        welcome_screen()
+        welcome_screen() # CHANGE TO REVIEW REQUEST
     elif admin_menu_input == ("q"):
         clear_screen()
 
@@ -341,6 +386,12 @@ def clear_screen():
     os.system('cls' if os.name == 'nt' else 'clear')
 
 
+def app_name():
+    console.print("[bold][red]iTAT - IT.ASSET.TRACKER", justify='center')
+
+
 if __name__=="__main__":
+    clear_screen()
+    app_name()
     welcome_screen()
     
