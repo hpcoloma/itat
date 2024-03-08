@@ -36,6 +36,14 @@ viewstock = SHEET.worksheet('CIL')
 # Accessing the Assigned worksheet
 viewstatus = SHEET.worksheet('Assigned')
 
+# Get the sheet where to pull the stock types 
+source_sheet = SHEET.worksheet('source')
+
+# Get the valid stock types from the first column in the source sheet
+valid_stock_types = source_sheet.col_values(1)
+
+# Get the valid stock code from the second column in the source sheet
+valid_stock_code = source_sheet.col_values(2)
 
 def current_stock():
     """
@@ -80,7 +88,7 @@ def current_status():
     table.add_column('Check-out Date')
     table.add_column('SKU')
     table.add_column('Staff')
-    table.add_column('ID')
+    table.add_column('Stock ID')
     table.add_column('Type')
     
     data = viewstatus.get_all_values()
@@ -128,18 +136,6 @@ def validate_date(date):
         return True
     except ValueError:
         return False
-
-
-# Get the sheet where to pull the stock types 
-source_sheet = SHEET.worksheet('source')
-
-
-# Get the valid stock types from the first column in the source sheet
-valid_stock_types = source_sheet.col_values(1)
-
-
-# Get the valid stock code from the second column in the source sheet
-valid_stock_code = source_sheet.col_values(2)
 
 
 def add_stock_menu():
@@ -215,10 +211,10 @@ def add_new_stock():
     all_stock_types()
 
     # Input new stock type and code
-    console.print("[bold]ADD NEW STOCK")
+    console.print("[bold]ADD NEW STOCK TYPE")
 
     while True:
-        new_stock_type = non_blank_input("Enter Stock Type:  ").strip().capitalize()
+        new_stock_type = non_blank_input("Enter Stock Type Name:  ").strip().capitalize()
         if new_stock_type in valid_stock_types:
             print("Error: Stock already exist. Please enter new stock type.")
         else:
@@ -231,13 +227,22 @@ def add_new_stock():
         else:
             break
     
+    #Append the new stock type to the worksheet
     stock_type.append_row([new_stock_type, new_stock_code])
-    console.print("[bold]NEW STOCK ADDED SUCCESSFULLY!", justify='center')
+        
+    #Refresh the valid_stock_types list
+    valid_stock_types.append(new_stock_type)   
     
+    console.print("[bold red]NEW STOCK ADDED SUCCESSFULLY!", justify='center')
+
+    time.sleep(2) # Pause for 2 seconds delay
+
     clear_screen()
     app_name()
     all_stock_types()
     admin_menu()
+
+    return new_stock_type
 
 
 # Function to validate stock type
@@ -285,6 +290,7 @@ def add_stock_user_input():
         if validate_stock_type(stock_type):
             break
         else:
+            print(valid_stock_types)
             print("Invalid stock type. Please choose from the table above.")
                         
     while True:
@@ -339,12 +345,13 @@ def edit_stock_menu():
         unassign_stock()
     elif edit_stock_input == ("a"):
         assign_stock()
-    elif edit_stock_input == ("q"):
-        clear_screen()
-    else:
+    elif edit_stock_input == ("m"):
         clear_screen()
         app_name()
         admin_menu()
+    elif edit_stock_input == ("q"):
+        clear_screen()
+       
 
 
 # Function to validate staff name
@@ -361,16 +368,16 @@ def generate_stock_id(sku, viewstatus):
     """
     Function to generate ID based on SKU and incrementing ID
     """
-    current_id=001 #Starting ID value
+    current_id=1 #Starting ID value
     existing_ids = viewstatus.col_values(4)[1:] # Header not included
 
     # Generate initial ID
-    new_id = f"{sku}{current_id}"
+    new_id = f"{sku}.{current_id}"
 
     # Validate if ID exists in the list if existing IDs
     while new_id in existing_ids:
         current_id += 1
-        new_id = f"{sku}{current_id}"
+        new_id = f"{sku}.{current_id}"
     
     return new_id
 
@@ -431,11 +438,11 @@ def unassign_stock():
     current_status()
     
     while True:
-        stock_id = non_blank_input("\nEnter the stock ID you want to unassign: ").strip()
+        stock_id = non_blank_input("\nEnter Stock ID to unassign: ").strip().upper()
 
         #Validate stock id entered   
         if validate_id(stock_id):
-            break
+            delete_assigned_stock(stock_id)
         else:
             print("Invalid ID. Please enter a valid ID.")
 
@@ -443,23 +450,20 @@ def delete_assigned_stock(stock_id):
     # Get the row index of the given ID
     data = viewstatus.get_all_values()
     stock_ids =  [row[3] for row in data[1:]]
+
+
     try:
         row_index = stock_ids.index(stock_id) + 2
         
-        print(row_index)
+        viewstatus.delete_rows(row_index)
+
+        print(f"Stock with ID {stock_id} has been unassigned.")
     except ValueError:
         print(f"Stock with ID {stock_id} is not assigned.")
         return
     
     
-    clear_screen()
-
-
-
-    # Delete the first three rows of the Assigned sheet base on the given ID
-    #viewstatus.delete_rows(2,3)
-
-    #print(f"Stock ID: {stock_id} has been successfully unassigned.")   
+    admin_menu()
 
     
 def welcome_screen():
