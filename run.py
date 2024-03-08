@@ -28,7 +28,7 @@ SHEET = GSPREAD_CLIENT.open('itat')
 console = Console()
 
 # Accessing Add Stock worksheet where new stock will be added
-sheet = SHEET.worksheet('Add Stock')
+addstock = SHEET.worksheet('Add Stock')
 
 #Accessing the CIL worksheet
 viewstock = SHEET.worksheet('CIL')
@@ -104,20 +104,21 @@ class StockItem():
     """
     Create new stock items base on user input of date, type and quantity
     """
-    def __init__(self, date, stock_type, quantity):
+    def __init__(self, date, stock_type, quantity, sku):
         self.date = date
         self.stock_type = stock_type
         self.quantity = quantity
+        self.sku = sku
 
     def display_info(self):
-        return f"Date: {self.date}, Type: {self.stock_type}, Quantity: {self.quantity}"
+        return f"Date: {self.date}, Type: {self.stock_type}, Quantity: {self.quantity}, SKU: {self.sku}"
 
 
-def add_stock(date, stock_type, quantity):
+def update_stock(date, stock_type, quantity, sku):
     """
-    Function to add new stock
+    Function to append Add Stock sheet
     """
-    sheet.append_row([date, stock_type, quantity])
+    addstock.append_row([date, stock_type, quantity, sku])
 
 
 # Function to validate date
@@ -137,9 +138,132 @@ source_sheet = SHEET.worksheet('source')
 valid_stock_types = source_sheet.col_values(1)
 
 
+# Get the valid stock code from the second column in the source sheet
+valid_stock_code = source_sheet.col_values(2)
+
+
+def add_stock_menu():
+    clear_screen()
+    app_name()
+    console.print("[bold]ADD STOCK CENTER", justify='center')
+    console.print("""
+    [bold]N - ADD NEW STOCK   A - ADD STOCK    M - MENU    Q - QUIT   
+    """, justify='center')
+
+    while True:
+        add_stock_menu_input = input("Enter Command Letter: ").strip().lower()
+        if add_stock_menu_input not in ("n", "a", "m", "q"):
+            print("Please enter N, A, M, Q")
+        else:
+            break   
+       
+    if add_stock_menu_input == ("n"):
+        add_new_stock()
+    elif add_stock_menu_input == ("a"):
+        add_stock_user_input()
+    elif add_stock_menu_input == ("q"):
+        clear_screen()
+    else:
+        clear_screen()
+        app_name()
+        admin_menu()
+
+
+def non_blank_input(prompt):
+    """
+    Fucntion to not allow user to enter blank input
+    """
+    while True:
+        user_input = input(prompt).strip()
+        if user_input:
+            return user_input
+        else:
+            print("Error: Input cannot be blank. Please try again.")
+
+
+def all_stock_types():
+    """
+    Function to display source sheet
+    """
+    # To access global varaibles
+    global stock_type
+
+    index = 0
+    table = Table(title='[bold]STOCK TYPE')
+    table.add_column('No.')
+    table.add_column('Type')
+    table.add_column('Code')
+
+    # Source sheet from which to retrieve valid item types
+    stock_type = SHEET.worksheet('source')
+ 
+    # Creates a table to display all stock type from source sheet
+    data = stock_type.get_all_values()
+    for row in data[1:]:
+        index +=1
+        table.add_row(str(index), *row[:2])
+
+    console.print(table, justify='center')
+
+
+def add_new_stock():
+    """
+    Function to add new stock item in the database
+    """
+    clear_screen()
+    app_name()
+    all_stock_types()
+
+    # Input new stock type and code
+    console.print("[bold]ADD NEW STOCK")
+
+    while True:
+        new_stock_type = non_blank_input("Enter Stock Type:  ").strip().capitalize()
+        if new_stock_type in valid_stock_types:
+            print("Error: Stock already exist. Please enter new stock type.")
+        else:
+            break
+    
+    
+    while True:
+        new_stock_code = non_blank_input("Enter Code:  ").strip().upper()
+        if new_stock_code in valid_stock_code:
+            print("Error: Code already exist. Please enter new code.")
+        else:
+            break
+     
+    
+    stock_type.append_row([new_stock_type, new_stock_code])
+    console.print("[bold]NEW STOCK ADDED SUCCESSFULLY!", justify='center')
+    
+    clear_screen()
+    app_name()
+    all_stock_types()
+    admin_menu()
+
+
 # Function to validate stock type
 def validate_stock_type(stock_type):
     return stock_type.lower() in[stock.lower() for stock in valid_stock_types]
+
+
+def generate_sku(stock_type, date):
+    """
+    Fucntion to generate SKU based on stock type and date input
+    """
+    # Get the corresponding value type in column 1 of the source sheet
+    stock_types_column = source_sheet.col_values(1)
+    index = stock_types_column.index(stock_type) + 1
+
+    # get corresponding value in column 2
+    sku = source_sheet.cell(index, 2).value
+
+    # Add the year in YYYY format to the SKU
+   #year = date[-4] # Extract the year from the date input
+    day, month, year = date.split("/")
+    new_sku = sku + year
+
+    return new_sku
 
 
 def add_stock_user_input():
@@ -149,46 +273,34 @@ def add_stock_user_input():
     """
     clear_screen()
     app_name()
-    index = 0
-    table = Table(title='[bold]STOCK TYPE')
-    table.add_column('No.')
-    table.add_column('Type')
-
-    # Source sheet from which to retrieve valid item types
-    stock_type = SHEET.worksheet('source')
- 
-    # Creates a table to display all stock type from source sheet
-    data = stock_type.get_all_values()
-    for row in data[1:]:
-        index +=1
-        table.add_row(str(index), *row[:1])
-
-    console.print(table, justify='center')
+    all_stock_types()    
     console.print("[bold]ADD STOCK:")
 
     while True:
-        date = input("Enter check-in date (DD/MM/YYY): ").strip()
+        date = non_blank_input("Enter check-in date (DD/MM/YYYY): ").strip()
         if validate_date(date):
             break
         else:
-            print("Invalid date format. Please enter the date in DD/MM/YYY format.")
+            print("Invalid date format. Please enter the date in DD/MM/YYYY format.")
 
     while True:
-        stock_type = input("Enter stock type: ").strip()
+        stock_type = non_blank_input("Enter stock type: ").strip().capitalize()
         if validate_stock_type(stock_type):
             break
         else:
             print("Invalid stock type. Please choose from the table above.")
                         
     while True:
-        quantity_input = input("Enter quantity: ").strip()
+        quantity_input = non_blank_input("Enter quantity: ").strip()
         if quantity_input.isdigit():
            quantity = int(quantity_input)
            break
         else:
            print("Invalid quantity. Please enter a valid number.")
     
-    add_stock(date, stock_type, quantity)
+    sku = generate_sku(stock_type, date)
+    update_stock(date, stock_type, quantity, sku)
+    print(year)
     console.print("[bold][red]UPDATING STOCK...", justify='center')
 
     time.sleep(2) # Pause for 2 seconds delay
@@ -221,7 +333,7 @@ def edit_stock_menu():
     """, justify='center')
 
     while True:
-        edit_stock_input = input("Enter Command Letter: ").strip().lower()
+        edit_stock_input = non_blank_input("Enter Command Letter: ").strip().lower()
         if edit_stock_input not in ("a", "u", "m", "q"):
             print("Please enter A, U, M, Q")
         else:
@@ -242,8 +354,8 @@ def edit_stock_menu():
 # Function to validate staff name
 def validate_name(prompt, max_length):
     while True:
-        value = input(prompt).strip()
-        if len(value) <= max_length and value.isalpha or "'" in value:
+        value = non_blank_input(prompt).strip()
+        if len(value) <= max_length and value.isalpha() or "'" in value:
             return value
         else:
             print("Please enter letters only and length is within", max_length, "characters.")
@@ -259,24 +371,22 @@ def assign_stock():
     console.print("[bold]ASSIGN STOCK")
 
     while True:
-        date = input("Enter Date (DD/MM/YYY): ").strip()
+        date = non_blank_input("Enter Date (DD/MM/YYYY): ").strip()
         if validate_date(date):
             break
         else:
-            print("Invalid date format. Please enter the date in DD/MM/YYY format.")
+            print("Invalid date format. Please enter the date in DD/MM/YYYY format.")
     
     while True:
-        sku = input("Enter SKU: ").strip()
+        sku = non_blank_input("Enter SKU: ").strip().upper()
         if validate_sku(sku):
             break
         else:
             print("Invalid SKU. Please choose from the table above.")
     
     # Get staff first name
-    fname = validate_name("Enter Staff First Name: ", max_length)
-
-    lname = validate_name("Enter Staff Last Name: ", max_length) #ACCEPTING NUMBERS.. CHECK
-    
+    fname = validate_name("Enter Staff First Name: ", max_length).capitalize()
+    lname = validate_name("Enter Staff Last Name: ", max_length).capitalize()  
     staff_name = f"{fname} {lname}"
     
     #Append Assigned sheet
@@ -305,7 +415,7 @@ def unassign_stock():
     current_status()
     
     while True:
-        stock_id = input("\nEnter the stock ID you want to unassign: ").strip()
+        stock_id = non_blank_input("\nEnter the stock ID you want to unassign: ").strip()
 
         #Validate stock id entered   
         if validate_id(stock_id):
@@ -367,7 +477,7 @@ def admin_menu():
     elif admin_menu_input == ("s"):
         view_status()
     elif admin_menu_input == ("a"):
-        add_stock_user_input()
+        add_stock_menu()
     elif admin_menu_input == ("e"):
         edit_stock()
     elif admin_menu_input == ("b"):
