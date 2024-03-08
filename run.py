@@ -221,8 +221,10 @@ def add_new_stock():
             break
     
     while True:
-        new_stock_code = non_blank_input("Enter Code:  ").strip().upper()
-        if new_stock_code in valid_stock_code:
+        new_stock_code = non_blank_input("Enter Code (up to 3 characters):  ").strip().upper()
+        if len(new_stock_code) > 3:
+            print("Error: Code should not exceed 3 characters.")
+        elif new_stock_code in valid_stock_code:
             print("Error: Code already exist. Please enter new code.")
         else:
             break
@@ -482,12 +484,12 @@ def admin_menu():
     """
     console.print("[bold][red]C.O.M.M.A.N.D   C.E.N.T.E.R", justify='center')
     console.print("""[bold]V - VIEW STOCK     S - VIEW STATUS     N - NEW STOCK       E - EDIT STOCK      
-    B - BOOK REQUEST       R - REVIEW REQUEST      Q - QUIT
+    Q - QUIT
     """, justify='center')
 
     while True:
         admin_menu_input = input("Enter Command Letter:").strip().lower()
-        if admin_menu_input not in ("v","s","q","n","e","b","r"):
+        if admin_menu_input not in ("v","s","q","n","e"):
             print("Invalid input. Please enter the correct letter.")
         else:
             break
@@ -500,10 +502,6 @@ def admin_menu():
         add_stock_menu()
     elif admin_menu_input == ("e"):
         edit_stock()
-    elif admin_menu_input == ("b"):
-        assign_stock() # CHANGE TO BOOK REQUEST
-    elif admin_menu_input == ("r"):
-        welcome_screen() # CHANGE TO REVIEW REQUEST
     elif admin_menu_input == ("q"):
         clear_screen()
 
