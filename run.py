@@ -147,7 +147,7 @@ def add_stock_menu():
     app_name()
     console.print("[bold]ADD STOCK CENTER", justify='center')
     console.print("""
-    [bold]N - ADD NEW STOCK   A - ADD STOCK    M - MENU    Q - QUIT   
+    [bold]N - ADD NEW STOCK TYPE   A - ADD EXISTING STOCK    M - MENU    Q - QUIT   
     """, justify='center')
 
     while True:
@@ -224,14 +224,12 @@ def add_new_stock():
         else:
             break
     
-    
     while True:
         new_stock_code = non_blank_input("Enter Code:  ").strip().upper()
         if new_stock_code in valid_stock_code:
             print("Error: Code already exist. Please enter new code.")
         else:
             break
-     
     
     stock_type.append_row([new_stock_type, new_stock_code])
     console.print("[bold]NEW STOCK ADDED SUCCESSFULLY!", justify='center')
@@ -259,7 +257,6 @@ def generate_sku(stock_type, date):
     sku = source_sheet.cell(index, 2).value
 
     # Add the year in YYYY format to the SKU
-   #year = date[-4] # Extract the year from the date input
     day, month, year = date.split("/")
     new_sku = sku + year
 
@@ -300,7 +297,6 @@ def add_stock_user_input():
     
     sku = generate_sku(stock_type, date)
     update_stock(date, stock_type, quantity, sku)
-    print(year)
     console.print("[bold][red]UPDATING STOCK...", justify='center')
 
     time.sleep(2) # Pause for 2 seconds delay
@@ -361,6 +357,23 @@ def validate_name(prompt, max_length):
             print("Please enter letters only and length is within", max_length, "characters.")
 
 
+def generate_stock_id(sku, viewstatus):
+    """
+    Function to generate ID based on SKU and incrementing ID
+    """
+    current_id=001 #Starting ID value
+    existing_ids = viewstatus.col_values(4)[1:] # Header not included
+
+    # Generate initial ID
+    new_id = f"{sku}{current_id}"
+
+    # Validate if ID exists in the list if existing IDs
+    while new_id in existing_ids:
+        current_id += 1
+        new_id = f"{sku}{current_id}"
+    
+    return new_id
+
 def assign_stock():
     clear_screen()
     app_name()
@@ -369,7 +382,7 @@ def assign_stock():
     max_length = 10
 
     console.print("[bold]ASSIGN STOCK")
-
+   
     while True:
         date = non_blank_input("Enter Date (DD/MM/YYYY): ").strip()
         if validate_date(date):
@@ -382,15 +395,18 @@ def assign_stock():
         if validate_sku(sku):
             break
         else:
-            print("Invalid SKU. Please choose from the table above.")
+            print("Invalid SKU. Please choose from the table above.")  
     
+    # Generate Stock ID
+    stock_id = generate_stock_id(sku, viewstatus)
+
     # Get staff first name
     fname = validate_name("Enter Staff First Name: ", max_length).capitalize()
     lname = validate_name("Enter Staff Last Name: ", max_length).capitalize()  
     staff_name = f"{fname} {lname}"
     
     #Append Assigned sheet
-    viewstatus.append_row([date, sku, staff_name])
+    viewstatus.append_row([date, sku, staff_name, stock_id])
     
     console.print("[bold][red]STOCK ASSIGNED SUCCESSFULLY!", justify='center')
 
@@ -461,13 +477,13 @@ def admin_menu():
     for each menu option
     """
     console.print("[bold][red]C.O.M.M.A.N.D   C.E.N.T.E.R", justify='center')
-    console.print("""[bold]V - VIEW STOCK     S - VIEW STATUS     A - ADD STOCK       E - EDIT STOCK      
+    console.print("""[bold]V - VIEW STOCK     S - VIEW STATUS     N - NEW STOCK       E - EDIT STOCK      
     B - BOOK REQUEST       R - REVIEW REQUEST      Q - QUIT
     """, justify='center')
 
     while True:
         admin_menu_input = input("Enter Command Letter:").strip().lower()
-        if admin_menu_input not in ("v","s","q","a","e","b","r"):
+        if admin_menu_input not in ("v","s","q","n","e","b","r"):
             print("Invalid input. Please enter the correct letter.")
         else:
             break
@@ -476,7 +492,7 @@ def admin_menu():
         view_stock()
     elif admin_menu_input == ("s"):
         view_status()
-    elif admin_menu_input == ("a"):
+    elif admin_menu_input == ("n"):
         add_stock_menu()
     elif admin_menu_input == ("e"):
         edit_stock()
