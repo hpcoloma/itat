@@ -2,6 +2,7 @@
 
 # iT ASSET MANAGEMENT
 
+![Am I responsive screenshot] (assets/images/itat_amiresponsive.JPG)
 
 Enter description and introduction here
 Insert 
