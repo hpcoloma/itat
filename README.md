@@ -54,7 +54,8 @@
 ![Home screen](assets/images/itat_layout.png)
 This program is designed to track IT assets, allowing IT administrators to add, view, assign and unassign stock to staff.
 
-### [Link to live project](https://itat-itassettracker-400e99525065.herokuapp.com/)
+### [Link to live project](https://itat-itassettracker-400e99525065.herokuapp.com/) 
+To open this link to new window, please right click and open link in new window.
 
 ### Objective
 To create an application that will assist IT Administrator in managing their IT assets. This application was designed using Python with Google Sheet API integration. The objective is to provide various functionalities such as adding new stock types, viewing current stock status, viewing assigned stock status, editing stock (assigning or unassigning), and quitting the application.
@@ -94,13 +95,13 @@ As an IT administrator, I would like to do the following:
 
 ### Strategy Plan
 Creating this application involves several steps. I want to ensure that it will meet the needs and provides a solution for managing IT assets effectively. Here's my plan on the creation of this application.
-1. DESIGN: I first design my application. I used [Lucidchart](https://lucid.app/) to create my flowchart. this helped me visualized the flow of the functionality of my application that I want to achieve.
-2. DATA SHEET: I created a [Google Sheet](https://docs.google.com/) where I want to store inputs on my application. I make sure that this is properly integrated to my Github account.
-3. CODING: I used [Gitpod](https://gitpod.io) to create this application. I also referenced some of my work from the Love Sandwiches video tutorial. Basic steps such as setting up my [Heroku](https://heroku.com) and Google Sheets can be found on the Love Sandwiches video tutorial.
-4. STYLE: When I was 75% complete, I added the style to make this project look appealing to end users.
-5. DEPLOYMENT: I set up my Heroku account half way through my project and the deployment instruction can also be found in the Love Sandwiches video tutorial.
-6. TEST AND DEBUG: While creating this project, I encountered some bugs which is detailed on the Deployment section of this ReadMe.
-7. DOCUMENTATION: As I build the application, I am also creating the ReadMe. 
+ - DESIGN: I first design my application. I used [Lucidchart](https://lucid.app/) to create my flowchart. this helped me visualized the flow of the functionality of my application that I want to achieve.
+ - DATA SHEET: I created a [Google Sheet](https://docs.google.com/) where I want to store inputs on my application. I make sure that this is properly integrated to my Github account.
+ - CODING: I used [Gitpod](https://gitpod.io) to create this application. I also referenced some of my work from the Love Sandwiches video tutorial. Basic steps such as setting up my [Heroku](https://heroku.com) and Google Sheets can be found on the Love Sandwiches video tutorial.
+ - STYLE: When I was 75% complete, I added the style to make this project look appealing to end users.
+ - DEPLOYMENT: I set up my Heroku account half way through my project and the deployment instruction can also be found in the Love Sandwiches video tutorial.
+ - TEST AND DEBUG: While creating this project, I encountered some bugs which is detailed on the Deployment section of this ReadMe.
+ - DOCUMENTATION: As I build the application, I am also creating the ReadMe. 
 
 ### Scope
 The scope of the IT asset tracking application project encompasses the development of a software solution that enables organizations to efficiently manage their IT assets. Here's a breakdown of the scope:
@@ -117,13 +118,13 @@ I used [Balsamiq](https://balsamiq.com) to generate digital sketches of how it w
 ![Wireframe](assets/images/itat_wireframe.png)
 ### Colour Scheme
 ![Colour Scheme](assets/images/color_gradient.png)
- - Primary Color (#223740): This is a dark shade of blue used for background elements and other supporting parts of the interface.
+ - ***Primary Color (#223740):*** This is a dark shade of blue used for background elements and other supporting parts of the interface.
 
- - Black (#000000): This is pure black, typically used for text and other essential elements that need to stand out. Also, given that the application will be running within a terminal.
+ - ***Black (#000000):*** This is pure black, typically used for text and other essential elements that need to stand out. Also, given that the application will be running within a terminal.
 
- - Red: This is a standard red color. I used for alerts, error messages, or other critical information.
+ - ***Red (#FF0000):*** This is a standard red color. I used for alerts, error messages, or other critical information.
 
- - White (#ffffff): This is pure white, often used for backgrounds or as a text color against darker backgrounds to ensure readability.
+ - ***White (#ffffff):*** This is pure white, often used for backgrounds or as a text color against darker backgrounds to ensure readability.
 
 ### Images
 I searched for a background that will suit my application. Given the title it self, I searched for anything that has IT equipment. This image from [Sutherland Weston](https://www.sutherlandweston.com/wp-content/uploads/2017/10/GettyImages-942813588.jpg) is the one I chose. 
@@ -291,6 +292,9 @@ The IT asset tracker system is developed using the following technologies and pr
 - ***datetime:*** The datetime module provides classes for manipulating dates and times. It offers various functionalities for working with dates, times, time zones, and timedelta objects. In IT Asset Tracker, it was used to handle date and time information associated with updating the stock, such as logging check-in/check-out timestamps.
 
 - ***gspread:*** The gspread library is a Python wrapper for the Google Sheets API. It enables developers to interact with Google Sheets programmatically, allowing tasks such as reading/writing data to spreadsheets, formatting cells, or managing worksheets. In IT Asset Tracker, it was used to store and retrieve asset-related data in Google Sheets, providing a centralized and accessible storage solution.
+
+- ***re:*** The re module is Python's built-in regular expression library, which provides support for pattern matching and string manipulation using regular expressions. It allows you to search for specific patterns within strings, extract substrings, replace text, and perform various other text processing tasks based on user-defined patterns. In IT Asset Tracker, the re module was used for parsing and validating input data, extracting relevant information from text fields, or enforcing data format standards.
+
 ### User Defined Modules
  - [file_texts](https://github.com/hpcoloma/itat/blob/main/file_texts.py) was used to store long texts and ASCII arts.
 ### Programs and frameworks
@@ -299,7 +303,7 @@ The IT asset tracker system is developed using the following technologies and pr
  - [***Gitpod***](https://www.gitpod.io/d) IDE to develop the app
  - [***GitHub***](https://github.com/) to host source code
  - [***Heroku***](https://heroku.com/) to deploy the live application
- - [***CI Template**](https://github.com/Code-Institute-Org/p3-template) used as the layout to start the project
+ - [***CI Template***](https://github.com/Code-Institute-Org/p3-template) used as the layout to start the project
  - [***CI Pep8 Python Linter***](https://pep8ci.herokuapp.com/) to validate python code
  - [***LucidChart***](https://lucid.app/) to design the flowcharts
  
