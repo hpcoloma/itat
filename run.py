@@ -211,7 +211,7 @@ def add_new_stock():
     all_stock_types()
 
     # Input new stock type and code
-    console.print("[bold]ADD NEW STOCK TYPE")
+    console.print("[bold]ADD NEW STOCK TYPE\n")
 
     while True:
         new_stock_type = non_blank_input(
@@ -300,7 +300,7 @@ def add_stock_user_input():
     clear_screen()
     app_name()
     all_stock_types()
-    console.print("[bold]ADD STOCK:")
+    console.print("[bold]ADD STOCK\n")
 
     while True:
         date = non_blank_input("Enter check-in date (DD/MM/YYYY):  ").strip()
@@ -432,7 +432,7 @@ def assign_stock():
 
     max_length = 10
 
-    console.print("[bold]ASSIGN STOCK")
+    console.print("\n[bold]ASSIGN STOCK\n")
 
     while True:
         date = non_blank_input("Enter Date (DD/MM/YYYY): ").strip()
@@ -495,7 +495,7 @@ def unassign_stock():
     app_name()
     current_status()
 
-    console.print("[bold]UNASSIGN STOCK")
+    console.print("\n[bold]UNASSIGN STOCK")
 
     while True:
         stock_id = non_blank_input(

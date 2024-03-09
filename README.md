@@ -1,15 +1,15 @@
 ![CI logo](https://codeinstitute.s3.amazonaws.com/fullstack/ci_logo_small.png)
 
 # iT ASSET MANAGEMENT
+
+
 Enter description and introduction here
 Insert 
 
 
 # Table of Contents
 
-- Your code must be placed in the `run.py` file
-- Your dependencies must be placed in the `requirements.txt` file
-- Do not edit any of the other files or your code may not deploy properly
+
 
 ## Creating the Heroku app
 
