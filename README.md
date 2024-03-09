@@ -2,7 +2,9 @@
 
 # iT ASSET MANAGEMENT
 
-![Am I responsive screenshot] (assets/images/itat_amiresponsive.JPG)
+! [Am I responsive screenshot] (assets/images/itat_amiresponsive.jpg)
+
+![Screenshot of homepage]
 
 Enter description and introduction here
 Insert 
