@@ -4,8 +4,6 @@
 
 ![Am I responsive image](assets/images/itat_amiresponsive.png)
 
-
-
 # Table of Contents
 - [Project Introduction](#project-introduction)
     - [iT Asset Tracker](#it-asset-tracker)
@@ -18,35 +16,33 @@
 -   [Design](#design)
     - [Wireframe](#wireframe)
     - [Colour Scheme](#colour-scheme)
+    - [Images](#images)
     - [Flowchart](#flowchart)
 -   [Features](#features)
     - [Welcome Screen](#Welcome-Screen)
     - [Command Center](#command-center)
-    - [C - Add stock](#c---add-stock)
     - [V - View Stock](#v---view-stock)
-    - [S - Search and edit](#s---search-and-edit)
-    - [E - Edit stock location](#e---edit-stock-location)
-    - [D - Delete](#d---delete)
-    - [I - Instructions](#i---instructions)
+    - [S - View Status](#s---view-status)
+    - [N - New Stock](#n---new-stock)
+    - [E - Edit Stock](#e---edit-stock)
     - [Q - Quit](#q---quit)
+    - [Storage Data](#storage-data)
+    - [Date validations](#date-validations)
 -   [Future Features](#future-features)
 -   [Testing](#testing)
--   [Bugs](#Bugs)
+-   [Bugs and Potential Issue](#bugs-and-potential-issu)
 -   [Technologies And Languages](#technologies-and-languages)
     - [Languages Used](#languages-used)
     - [Python Modules](#python-modules)
     - [User Defined Modules](#user-defined-modules)
-    - [Technologies and programs](#technologies-and-programs)
--   [Deployment](#deployment)
-    - [Before Deployment](#before-deployment)
+    - [Programs and frameworks](#programs-and-frameworks)
+    - [Development](#development)
     - [Deployment on Heroku](#deployment-on-heroku)
-    - [Creating A Fork](#creating-a-fork)
+    - [Forking your repository](#forking-your-repository)
     - [Cloning Repository](#cloning-repository)
--   [Credits](#credits)
-    - [Media](#media)
-    - [Code](#code)
-    - [Acknowledgements](#acknowledgements)
-    - [Comments](#comments)
+- [Credits](#credits)
+- [Acknowledgements](#acknowledgements)
+
 
 ## Project Introduction
 
@@ -389,7 +385,7 @@ I used the following sources to complete this project.
 
 
 
-### Acknowledgements
+## Acknowledgements
 This project will not be live today without the help and support of the following people:
 
 1. Arnold Ambida - my husband, who looks after my 3 children while I do this course.
