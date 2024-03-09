@@ -111,6 +111,8 @@ As an IT Administrator,  I want to be able to add new stock items to the invento
  - ### **Result - All clear, no errors found**
 
 ![CI PYTHON](assets/images/cipythonlinter_result.png)
+
+![CI Pep 8 Python Linter for file texts](assets/images/itat_pep8_file_tetxs.PNG)
 ### Lighthouse
 
 - ### **Result - Pass**

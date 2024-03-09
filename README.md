@@ -153,11 +153,13 @@ View the current inventory listing in a structured table format
 View the current status of assigned stocks in a tabular format.
 ![Welcome](assets/images/itat_viewstatus.PNG)
 ### N - New Stock
-Add a new type of stock to the system.
-Add existing stock items to the inventory.
 ![Welcome](assets/images/itat_newstock.PNG)
+Add a new type of stock to the system.
 ![Welcome](assets/images/itat_addnewstock.PNG)
+Add existing stock items to the inventory.
 ![Welcome](assets/images/itat_addexisting.PNG)
+- When stock is added, application generates a unique sku base on type code and year ie Laptop (LT) entered in 01/01/2024, sku will be ***LT2024***  
+![SKU](assets/images/itat_addstock_sku.PNG)
 ### E - Edit Stock
 Assign and unassign assets.
 ![Welcome](assets/images/itat_editstock.PNG)
@@ -173,7 +175,13 @@ Unassign stock items from staff members.
 This refreshes the 
 ![Quit](assets/images/itat_quit.PNG)
 ### Storage Data
-![Google Sheet](assets/images/cipythonlinter_result.png)
+![Google Sheet](assets/images/itat_googlesheet.PNG)
+### Date Validations
+Date are validated base on the following:
+ - Date should not be in the future on all functions.
+ - Date should be within the last 5 years when ADDING STOCK, otherwise stock is obsolete.
+ - Date should be within the last 12 months when entering assigned stock.
+ - Date format should be DD/MM/YYYY
 ## Future Features
 For future enhancements:
  - DISPOSAL: Plan to add disposal of obsolete stocks. Calculation is base on accounting procedure to calculate depreciation.
@@ -263,13 +271,12 @@ I am encountering a delay in reflecting the changes made by assign_stock() when 
 
 ## Technologies And Languages
 The IT asset tracker system is developed using the following technologies and programming languages:
- - ***Google Sheets:*** Utilized for storing and managing the inventory data in a spreadsheet format.
 
- -***Python:*** The main programming language used for implementing the backend logic and interaction with Google Sheets. Python provides libraries such as gspread for accessing Google Sheets API and rich for enhancing the command-line interface with rich text formatting.
+### Languages Used
+ - ***Python:*** The main programming language used for implementing the backend logic and interaction with Google Sheets. Python provides libraries such as gspread for accessing Google Sheets API and rich for enhancing the command-line interface with rich text formatting.
 
  - ***HTML (Hypertext Markup Language):*** s the standard markup language for creating web pages and web applications. It provides the structure and content of the web pages.
  - ***CSS (Cascading Style Sheets):*** CSS is used for styling the HTML elements, This was used to position, add background and colors to the application web page.
- - ***Google Sheets API:*** Used to interact with Google Sheets programmatically, allowing the application to read from and write to spreadsheet documents stored in Google Drive.
  - ***Rich library:*** Employed for enhancing the command-line interface with formatted text, including colors, styles, and tables, providing a more visually appealing and user-friendly experience.   
  
  Overall, the combination of Python, Google Sheets, Google Sheets API, and the Rich library enables the development of a robust IT asset tracker system with a user-friendly command-line interface for managing inventory effectively.
@@ -285,16 +292,103 @@ The IT asset tracker system is developed using the following technologies and pr
 
 - ***gspread:*** The gspread library is a Python wrapper for the Google Sheets API. It enables developers to interact with Google Sheets programmatically, allowing tasks such as reading/writing data to spreadsheets, formatting cells, or managing worksheets. In IT Asset Tracker, it was used to store and retrieve asset-related data in Google Sheets, providing a centralized and accessible storage solution.
 ### User Defined Modules
- - file_texts was used to store the 
-### Technologies and programs
-## Deployment
-### Before Deployment
-### Deployment on Heroku    
-### Creating A Fork
+ - [file_texts](https://github.com/hpcoloma/itat/blob/main/file_texts.py) was used to store long texts and ASCII arts.
+### Programs and frameworks
+- [***Google Sheets:***](https://docs.google.com/spreadsheets/u/0/) Utilized for storing and managing the inventory data in a spreadsheet format
+ - [***Google Sheets API:***](https://developers.google.com/sheets/api/reference/rest) Used to interact with Google Sheets programmatically, allowing the application to read from and write to spreadsheet documents stored in Google Drive.
+ - [***Gitpod***](https://www.gitpod.io/d) IDE to develop the app
+ - [***GitHub***](https://github.com/) to host source code
+ - [***Heroku***](https://heroku.com/) to deploy the live application
+ - [***CI Template**](https://github.com/Code-Institute-Org/p3-template) used as the layout to start the project
+ - [***CI Pep8 Python Linter***](https://pep8ci.herokuapp.com/) to validate python code
+ - [***LucidChart***](https://lucid.app/) to design the flowcharts
+ 
+## Development
+This application was develop in Gitod, hosted in GitHub and deployed in Heroku
+## Deployment on Heroku
+This project is deployed in Heroku
+The below steps were followed to deploy the application.
+1. Create and account ifd you don't have one.
+2. On yuor Dashboard, click Create New App
+3. I choose the name "itat-itassettracker" for my application name and choose Europe as region.
+4. Click create app.
+5. On the app settings tab, I choose the following:  
+    a.	***Config Vars*** – I set my key/value pairs for CREDS and PORT.  
+    The value for the CREDS key is found in your requirements.txt file. This is automatically generated when you use the command in the terminal ‘pip3 freeze>requirements’. Make sure you run this first before deploying your application.
+    ![Config vars](assets/images/configvars.png)
+    b.	***Buildpacks*** – added python and nodejs (should be in this order)
+    ![Buildpacks](assets/images/buildpacks.png)  
+    c. No settings for SSL  
+    d.	***Domains*** – automatically generated.
+6. On the Deploy tab  
+    a.	***Deployment method*** – Github. You make sure you connect your Github account to Heroku.  
+    b.	***App connected to Github*** – I connected my repo “itat” to link up my Heroku app to my Github repository code  
+    c.	***Manual Deploy*** – I initially chose this to see the deployment logs as the app is built.  
+    d.	***View App*** – I viewed the app.  
+    e. ***Automatic Deploys*** - Once I know that my app is running okay, I then enabled automatic deploy so I don’t have to manually deploy branch everytime I push changes to Github. I am 75% done when I deployed this project. Heroku will rebuild my app everytime I push a new change to my code to Github.     
+### Forking your repository
+To fork a repository on GitHub, follow these steps:
+
+1. Navigate to the Repository: Go to the GitHub repository you want to fork. You can do this by entering the repository URL in your browser or by searching for the repository on GitHub.
+
+2. Find the "Fork" Button: On the repository page, you'll see a button labeled "Fork" in the top right corner of the page, next to the "Star" and "Watch" buttons. Click on the "Fork" button.
+
+3. Choose where to Fork: GitHub will prompt you to choose where you want to fork the repository. You can fork it to your personal GitHub account or to any organizations you're a member of. Select the desired location.
+
+4. Wait for the Fork to Complete: GitHub will create a copy of the repository in your account or organization. Depending on the size of the repository and the current server load, this process may take a few moments.
+
+5. Access Your Forked Repository: Once the forking process is complete, you'll be redirected to your forked copy of the repository. You can now clone the repository to your local machine, make changes, and push them to your fork.
+
+6. Keep Your Fork Synced: If you forked a repository to contribute changes back to the original repository, you may want to keep your fork up-to-date with the original repository. You can do this by configuring an "upstream" remote and pulling changes from it periodically.
+
+That's it! You've successfully forked a repository on GitHub. You can now start working with the code in your fork, making changes, and contributing back to the original repository through pull requests.
 ### Cloning Repository
+To clone a repository from GitHub to your local machine, follow these steps:
+
+1. Find the Repository: Go to the GitHub repository you want to clone. You can do this by entering the repository URL in your browser or by searching for the repository on GitHub.
+
+2. Copy the Repository URL: On the repository page, click on the "Code" button. This will reveal a URL for the repository. Click on the clipboard icon to copy the URL to your clipboard.
+
+3. Open Terminal (or Command Prompt): Open your terminal or command prompt on your local machine. You can usually find it in your applications or by searching for "Terminal" (on macOS and Linux) or "Command Prompt" (on Windows).
+
+4. Navigate to the Directory Where You Want to Clone the Repository: Use the cd command to navigate to the directory where you want to clone the repository. For example, if you want to clone the repository into a folder named "projects" in your home directory, you would use the following command:
+
+        cd ~/projects
+
+5. Clone the Repository: Once you're in the directory where you want to clone the repository, use the git clone command followed by the repository URL you copied earlier. For example, if the repository URL is https://github.com/username/repository.git, you would use the following command:
+
+        git clone https://github.com/username/repository.git
+
+6. Enter Your GitHub Credentials (if prompted): If the repository is private and requires authentication, you may be prompted to enter your GitHub username and password or personal access token.
+
+7. Wait for the Cloning Process to Complete: Git will clone the repository from GitHub to your local machine. Depending on the size of the repository and your internet connection speed, this process may take some time.
+
+8. Access the Cloned Repository: Once the cloning process is complete, you'll have a local copy of the repository on your machine. You can navigate into the repository directory using the cd command and start working with the files.
+
+That's it! You've successfully cloned a repository from GitHub to your local machine. You can now make changes to the files, commit them, and push them back to the repository on GitHub if you have write access.
+
 ## Credits
-### Media
-### Code
+
+I used the following sources to complete this project.
+
+- [W3School](https://w3schools.com) – code sources for python
+- [Stackoverflow](https://stackoverflow.com/) - for codes, tips and answers to some q&a. 
+- [JPG 2 PNG](https://jpg2png.com) - to convert jpg to png
+- [ASCII Art](https://www.asciiart.eu/text-to-ascii-art) - for ASCII text to logo
+- [Jetbrains](https://www.jetbrains.com/help/hub/markdown-syntax.html) - reference for markdown sheet
+- [Sutherland Weston](https://www.sutherlandweston.com/wp-content/uploads/2017/10/GettyImages-942813588.jpg) - for my background image
+- [Sheetgo](https://www.sheetgo.com/) - used to create my google sheet
+- [Eightshades Contrast Grid](https://contrast-grid.eightshapes.com/?version=1.1.0&background-colors=&foreground-colors=%234a7abc%0D%0A%23223740%0D%0A%236593A6%0D%0ABABEBF%0D%0A%23F2f2f2%0D%0Afffff%0D%0A&es-color-form__tile-size=compact&es-color-form__show-contrast=aaa&es-color-form__show-contrast=aa&es-color-form__show-contrast=aa18&es-color-form__show-contrast=dnp) - checked the colour combination contrast
+- [Adobe Color](https://color.adobe.com) - created my palette by uploading the background image here
+- [Balsamiq](https://balsamiq.com/) - for wireframes
+
+
+
+
 ### Acknowledgements
-### Comments](#comments)
+This project will not be live today without the help and support of the following people:
+
+1. Arnold Ambida - my husband, who looks after my 3 children while I do this course.
+2. Matt Bodden - my mentor who have made a significant impact on completing this projecs with all the tips and the encouragements.
+
 
