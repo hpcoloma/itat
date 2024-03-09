@@ -2,7 +2,7 @@
 
 ### [Link to live project](https://itat-itassettracker-400e99525065.herokuapp.com/)
 
-## User Story testing
+## User Story Testing
 - As an IT Administrator, I want to be able to view the current stock inventory so that I can assess the availability of different types of stock.
 #### Acceptance Criteria:
 
@@ -107,13 +107,17 @@ As an IT Administrator,  I want to be able to add new stock items to the invento
 10. Ensure that a confirmation message is displayed indicating the successful addition of the item.
 
 ## Automated Testing
-- Result - All clear, no errors found
 ### Pep8 CI Python Linter
+ - ### **Result - All clear, no errors found**
+
 ![CI PYTHON](assets/images/cipythonlinter_result.png)
 ### Lighthouse
+
+- ### **Result - Pass**
 
 ![Lighthouse](assets/images/itat_lighthouse.PNG))
 
 ### W3C CSS Validator
 There were some additional css code addedd to the layout.html that includes background image and positioning of the terminal and button on the browser.
+- ### **Result - No Error Found**
 ![W3C CSS Validator](assets/images/itat_w3ccss.PNG)

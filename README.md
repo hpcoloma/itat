@@ -177,7 +177,7 @@ This refreshes the
 ## Future Features
 For future enhancements:
  - DISPOSAL: Plan to add disposal of obsolete stocks. Calculation is base on accounting procedure to calculate depreciation.
- - REPORTS: Alow users to generate reports based on various criteris such as stock type, date range, assigned status etc.
+ - REPORTS: Allow users to generate reports based on various criteria such as stock type, date range, assigned status etc.
  - ALERTS AND NOTIFICATIONS: 
     - Implement a notification system to alert users about low stock levels, expiring stock, or pending assignments.
     - Users can receive alerts via email, SMS, or within the application itself.
@@ -193,51 +193,99 @@ For future enhancements:
  - MOBILE APPLICATION:
     - Develop a mobile application version of the IT asset tracker for on-the-go access.
     - Mobile support enables users to manage stock, view statuses, and make assignments from their smartphones or tablets.
-AUDIT TRAIL AND HISTORY
+ - AUDIT TRAIL AND HISTORY
     - Maintain a detailed audit trail of all stock-related activities, including additions, assignments, modifications, and deletions.
     - History tracking provides accountability and helps identify discrepancies or issues in the inventory management process.
 ## Testing
 Complete details of testing is found on this [link](testing.md)
 
-## Bugs
+## Bugs and Potential Issue
 Bugs identified during the process.
 
 1.	When I run my program, it is taking about 8 seconds before it display the start of the program in Heroku. It is the same in Gitpod but the delay is about 15 seconds, I thought it was because Gitpod is dependent on my laptop specs, but seems like it is the same in Heroku. I am unsure what is causing the delay. I have put a timesleep of about 2 seconds on one of the function, I have tried removing it but it did not make any changes.
 
 2.	After deploying iTAT in Heroku, when I first run the application. I was getting an error of:
 
-    *Traceback (most recent call last):
-    File "/app/run.py", line 9, in <module> 
-    from rich.console import Console 
-    ModuleNotFoundError: No module named 'rich'*
+        Traceback (most recent call last):  
+        File "/app/run.py", line 9, in <module>  
+        from rich.console import Console  
+        ModuleNotFoundError: No module named 'rich'
 
-    I used rich.console to give my texts style. In Gitpod, the app was working fine and not receiving this error. . I searched on some resources online and found this tutorials in Freecodecamp (source: https://www.freecodecamp.org/news/module-not-found-error-in-python-solved/). This error indicated that the ‘rich’ module is not installed in my Python environment. So Installed ‘rich’ module by running the following command
-    *pip install rich*
-I
-I manually deploy branch to apply changes, after running my app I am still getting the same error. I came across on this question in Stackoverflow (https://stackoverflow.com/questions/71467608/modulenotfounderror-no-module-named-app-heroku)  whereby the user is having the issue as mine. 
+    I used rich.console to give my texts style. In Gitpod, the app was working fine and not receiving this error. . I searched on some resources online and found this tutorials in [Freecodecamp](https://www.freecodecamp.org/news/module-not-found-error-in-python-solved/). This error indicated that the ‘rich’ module is not installed in my Python environment. So Installed ‘rich’ module by running the following command
+    
+        pip install rich
 
-*Resolution:*
 
-The following are the steps I took to resolve the issue:
-a.	I install rich by entering this in the command line in Gitpod
-‘pip3 install rich’
-b.	I add the word ‘rich’ in my requirements.txt
-c.	Commit and push to Github. 
-d.	Run my application in Heroku once it has captured the updates in Github.
-e.	App run successfully without the error.
+    I manually deploy branch to apply changes, after running my app I am still getting the same error. I came across on this question in [Stackoverflow](https://stackoverflow.com/questions/71467608/modulenotfounderror-no-module-named-app-heroku)  whereby the user is having the issue as mine. This is the step I did to fix the error.
 
-3.	On the add_new_stock function, after adding a new stock type, the app will append the new stock type on the list of stock type. But if you try to add a stock on the newly added stock type, the app is not recognising the new stock type. You have to re-run the app for it to recognise the new stock eventhough it is listed.
-Resolution:
-After appending the sheet, you will have to refresh the variable valid_stock_types. To refresh the valid_stock_types list, I added this code:
-valid_stock_types.append(new_stock_type)
-4.	On the EDIT STOCK menu, when you ASSIGN STOCK, it updates the Assigned 
-Stock sheet with the newly assigned stock. As seen below, line no. 6 is a stock I just assigned.
+    ***Resolution:***
 
+    The following are the steps I took to resolve the issue:        
+    
+    a.	I install rich by entering this in the command line in Gitpod  
+
+        pip3 install rich
+       
+    b.	I add the word ‘rich’ in my requirements.txt  
+    c.	Commit and push to Github.  
+    d.	Run my application in Heroku once it has captured the updates in Github.  
+    e.	App run successfully without the error.
+
+3.	On the *add_new_stock* function, after adding a new stock type, the app will append the new stock type on the list of stock type. But if you try to add a stock on the newly added stock type, the app is not recognising the new stock type. You have to re-run the app for it to recognise the new stock eventhough it is listed.
+
+    ***Resolution:***
+
+    After appending the sheet, you will have to refresh the variable valid_stock_types. To refresh the valid_stock_types list, I added this code:
+
+        valid_stock_types.append(new_stock_type)*=
+
+    This code refreshes the valid_stock_types list before it is being displayed after the new stock is added.
+
+4.	On the EDIT STOCK menu, when you ASSIGN STOCK, it updates the Assigned.Stock sheet with the newly assigned stock. As seen below, line no. 6 is a stock I just assigned. 
+![Assign Stock Bug](assets/images/itat_bug_assignstock.PNG)
+
+    If I want to immediately unassign this, this is what I am getting:
+![Assign Stock Bug](assets/images/itat_bug_assignstock2.PNG)
+The changes are reflected after I re-run the application.
+I am encountering a delay in reflecting the changes made by assign_stock() when I try to immediately unassign a recently assigned stock. Looks like the data not being refreshed after assigning the stock.
+
+    ***Resolution:***
+
+    To address this issue, I have to update the **valid_id** list after appending the newly assigned stock to the sheet. By updating the **valid_id** list after appending the newly assigned stock to the sheet, this ensure that the changes are reflected immediately, allowing user to unassign a recently assigned stock without the need to refresh the terminal. In line 468
+
+        #Updates the valid_id list  
+        global valid_id  
+        valid_id = viewstatus.col_values(4)
+    
+    ***Conclusion:***
+
+    Everytime a list updated, you have to refresh the list before calling the function that contains the list. Even though the update is visibile on the output, it doesn't mean it is immediateky available to access. 
 
 ## Technologies And Languages
-### Languages Used
+The IT asset tracker system is developed using the following technologies and programming languages:
+ - ***Google Sheets:*** Utilized for storing and managing the inventory data in a spreadsheet format.
+
+ -***Python:*** The main programming language used for implementing the backend logic and interaction with Google Sheets. Python provides libraries such as gspread for accessing Google Sheets API and rich for enhancing the command-line interface with rich text formatting.
+
+ - ***HTML (Hypertext Markup Language):*** s the standard markup language for creating web pages and web applications. It provides the structure and content of the web pages.
+ - ***CSS (Cascading Style Sheets):*** CSS is used for styling the HTML elements, This was used to position, add background and colors to the application web page.
+ - ***Google Sheets API:*** Used to interact with Google Sheets programmatically, allowing the application to read from and write to spreadsheet documents stored in Google Drive.
+ - ***Rich library:*** Employed for enhancing the command-line interface with formatted text, including colors, styles, and tables, providing a more visually appealing and user-friendly experience.   
+ 
+ Overall, the combination of Python, Google Sheets, Google Sheets API, and the Rich library enables the development of a robust IT asset tracker system with a user-friendly command-line interface for managing inventory effectively.
 ### Python Modules
+- ***Google OAuth2:*** Used for authentication and authorization to access Google Sheets API securely. This allows the application to access and manipulate spreadsheet data on behalf of the user.
+- ***sys:*** The sys module provides access to some variables used or maintained by the Python interpreter and to functions that interact with the interpreter. In the context of IT Asset Tracker, it was used for system-level operations such as handling command-line arguments or accessing system-specific information.
+
+- ***time:*** The time module provides various time-related functions. It can be used to handle time-related operations such as calculating time differences, setting delays, or formatting time strings. In IT Asset Tracker, it could be used to timestamp events or manage timeouts.
+
+- ***os:*** The os module provides a way to interact with the operating system. It can be used to perform operating system-related tasks such as navigating the file system, manipulating file paths, or executing shell commands. In IT Asset Tracker, it was used for file management operations or executing system commands related to asset tracking.
+
+- ***datetime:*** The datetime module provides classes for manipulating dates and times. It offers various functionalities for working with dates, times, time zones, and timedelta objects. In IT Asset Tracker, it was used to handle date and time information associated with updating the stock, such as logging check-in/check-out timestamps.
+
+- ***gspread:*** The gspread library is a Python wrapper for the Google Sheets API. It enables developers to interact with Google Sheets programmatically, allowing tasks such as reading/writing data to spreadsheets, formatting cells, or managing worksheets. In IT Asset Tracker, it was used to store and retrieve asset-related data in Google Sheets, providing a centralized and accessible storage solution.
 ### User Defined Modules
+ - file_texts was used to store the 
 ### Technologies and programs
 ## Deployment
 ### Before Deployment
