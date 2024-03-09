@@ -1,6 +1,6 @@
 ![CI logo](https://codeinstitute.s3.amazonaws.com/fullstack/ci_logo_small.png)
 
-# iT ASSET MANAGEMENT
+# iT ASSET TRACKER
 
 ![Am I responsive image](assets/images/itat_amiresponsive.png)
 
