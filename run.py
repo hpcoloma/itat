@@ -3,12 +3,14 @@ import gspread
 import time
 import re
 import os
+import sys
+import datetime
 
 from google.oauth2.service_account import Credentials
 from file_texts import LOGO, DESCRIPTION
 from rich.console import Console
 from rich.table import Table
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 SCOPE = [
@@ -45,12 +47,14 @@ valid_stock_types = source_sheet.col_values(1)
 # Get the valid stock code from the second column in the source sheet
 valid_stock_code = source_sheet.col_values(2)
 
+
 def current_stock():
     """
     Display current inventory listing in a table format
     """
+    console.print("[bold]CURRENT STOCK CENTER", justify='center')
     index = 0
-    table = Table(title='[bold]CURRENT STOCK')
+    table = Table(title='')
     table.add_column('No.')
     table.add_column('SKU')
     table.add_column('Type')
@@ -69,7 +73,7 @@ def current_stock():
         table.add_row(str(index), *row)
     
     console.print(table, justify='center')
-
+    
 
 def view_stock():
     clear_screen()
@@ -82,8 +86,9 @@ def current_status():
     """
     Display check-out sheet with status of each assigned stocks
     """
+    console.print("[bold]ASSIGNED STOCK CENTER", justify='center')
     index = 0
-    table = Table(title='[bold]ASSIGNED STOCK')
+    table = Table(title='')
     table.add_column('No.')
     table.add_column('Check-out Date')
     table.add_column('SKU')
@@ -127,15 +132,6 @@ def update_stock(date, stock_type, quantity, sku):
     Function to append Add Stock sheet
     """
     addstock.append_row([date, stock_type, quantity, sku])
-
-
-# Function to validate date
-def validate_date(date):
-    try:
-        datetime.strptime(date, '%d/%m/%Y')
-        return True
-    except ValueError:
-        return False
 
 
 def add_stock_menu():
@@ -221,7 +217,7 @@ def add_new_stock():
             break
     
     while True:
-        new_stock_code = non_blank_input("Enter Code (up to 3 characters):  ").strip().upper()
+        new_stock_code = non_blank_input("Assign Code (up to 3 characters):  ").strip().upper()
         if len(new_stock_code) > 3:
             print("Error: Code should not exceed 3 characters.")
         elif new_stock_code in valid_stock_code:
@@ -233,7 +229,9 @@ def add_new_stock():
     stock_type.append_row([new_stock_type, new_stock_code])
         
     #Refresh the valid_stock_types list
-    valid_stock_types.append(new_stock_type)   
+    valid_stock_types.append(new_stock_type)
+
+    #Update 
     
     console.print("[bold red]NEW STOCK ADDED SUCCESSFULLY!", justify='center')
 
@@ -270,6 +268,22 @@ def generate_sku(stock_type, date):
     return new_sku
 
 
+# Function to validate date
+def validate_date(date_str):
+    try:
+        day, month, year = map(int, date_str.split('/'))
+        # Adding leading zeros for single-digit day and month
+        date_str = f"{day:02d}/{month:02d}/{year}"
+        date = datetime.strptime(date_str, "%d/%m/%Y")
+        if date > datetime.now():
+            print("Date cannot be in the future.")
+            return False
+        return True
+    except ValueError:
+        print("Invalid date format. Please enter the date in DD/MM/YYYY format.")
+        return False
+
+
 def add_stock_user_input():
     """
     Function to take date, type and quantity input by user
@@ -281,14 +295,17 @@ def add_stock_user_input():
     console.print("[bold]ADD STOCK:")
 
     while True:
-        date = non_blank_input("Enter check-in date (DD/MM/YYYY): ").strip()
+        date = non_blank_input("Enter check-in date (DD/MM/YYYY):  ").strip()
         if validate_date(date):
-            break
-        else:
-            print("Invalid date format. Please enter the date in DD/MM/YYYY format.")
+            date_obj = datetime.strptime(date, "%d/%m/%Y")
+            five_years_ago = datetime.now() - timedelta(days=5*365)
+            if date_obj >= five_years_ago:
+                break
+            else:
+                print("Stock is now obsolete. Stock life expectancy is only 5 years.")
 
     while True:
-        stock_type = non_blank_input("Enter stock type: ").strip().capitalize()
+        stock_type = non_blank_input("Enter stock type:  ").strip().capitalize()
         if validate_stock_type(stock_type):
             break
         else:
@@ -296,7 +313,7 @@ def add_stock_user_input():
             print("Invalid stock type. Please choose from the table above.")
                         
     while True:
-        quantity_input = non_blank_input("Enter quantity: ").strip()
+        quantity_input = non_blank_input("Enter quantity:  ").strip()
         if quantity_input.isdigit():
            quantity = int(quantity_input)
            break
@@ -331,7 +348,7 @@ def edit_stock():
 
 
 def edit_stock_menu():
-    console.print("[bold]EDIT STOCK", justify='center')
+    console.print("[bold]EDIT STOCK CENTER", justify='center')
     console.print("""
     [bold]A - ASSIGN STOCK    U - UNASSIGN STOCK    M - MENU    Q - QUIT   
     """, justify='center')
@@ -352,7 +369,10 @@ def edit_stock_menu():
         app_name()
         admin_menu()
     elif edit_stock_input == ("q"):
+        console.print("[bold red]QUITTING THE APPLICATION...", justify='center')
+        time.sleep(4)
         clear_screen()
+        sys.exit()
        
 
 
@@ -395,10 +415,13 @@ def assign_stock():
     while True:
         date = non_blank_input("Enter Date (DD/MM/YYYY): ").strip()
         if validate_date(date):
-            break
-        else:
-            print("Invalid date format. Please enter the date in DD/MM/YYYY format.")
-    
+            date_obj = datetime.strptime(date, "%d/%m/%Y")
+            more_than_one_year = datetime.now() - timedelta(days=365)
+            if date_obj >= more_than_one_year:
+                break
+            else:
+                print("You can only enter assigned stocks for the last 12 months.")
+            
     while True:
         sku = non_blank_input("Enter SKU: ").strip().upper()
         if validate_sku(sku):
@@ -416,6 +439,10 @@ def assign_stock():
     
     #Append Assigned sheet
     viewstatus.append_row([date, sku, staff_name, stock_id])
+
+    #Update valid_id list
+    global valid_id
+    valid_id = viewstatus.col_values(4)
     
     console.print("[bold][red]STOCK ASSIGNED SUCCESSFULLY!", justify='center')
 
@@ -438,33 +465,51 @@ def unassign_stock():
     clear_screen()
     app_name()
     current_status()
-    
-    while True:
-        stock_id = non_blank_input("\nEnter Stock ID to unassign: ").strip().upper()
 
-        #Validate stock id entered   
+    console.print("[bold]UNASSIGN STOCK")
+
+    while True:
+        stock_id = non_blank_input("\nEnter Stock ID to unassign:  ").strip().upper()
+         #Validate stock id entered   
         if validate_id(stock_id):
-            delete_assigned_stock(stock_id)
+            console.print("VALIDATING ...")
+            time.sleep(2)
+
+            # Clear the screen from the word "VALIDATING ..." onwards
+            print("\033[J", end='', flush=True)
+
+            #Ask to confirm
+            confirmation = non_blank_input(f"Are you sure you want to unassign {stock_id}? (Y/N):  ").strip().upper()
+
+            if confirmation == 'Y':
+                console.print("[bold][red]UNASSIGNING STOCK...\n", justify='center')
+                time.sleep(2) # Pause for 2 seconds delay
+                delete_assigned_stock(stock_id)
+                break
+            elif confirmation == 'N':
+                continue
+            else:
+                print("Invalid input. Please enter 'Y' or 'N'.")
         else:
             print("Invalid ID. Please enter a valid ID.")
 
+    
 def delete_assigned_stock(stock_id):
     # Get the row index of the given ID
     data = viewstatus.get_all_values()
     stock_ids =  [row[3] for row in data[1:]]
 
-
     try:
         row_index = stock_ids.index(stock_id) + 2
-        
         viewstatus.delete_rows(row_index)
-
-        print(f"Stock with ID {stock_id} has been unassigned.")
+        console.print(f"[bold red]STOCK WITH ID {stock_id} HAS BEEN UNASSIGNED.\n", justify='center')
+        time.sleep(2) # Pause for 2 seconds delay 
     except ValueError:
-        print(f"Stock with ID {stock_id} is not assigned.")
-        return
-    
-    
+        console.print(f"STOCK WITH ID {stock_id} IS NOT ASSIGNED.\n", justify='center')
+        time.sleep(2) # Pause for 2 seconds delay
+    clear_screen()
+    app_name()
+    current_status()   
     admin_menu()
 
     
@@ -503,7 +548,10 @@ def admin_menu():
     elif admin_menu_input == ("e"):
         edit_stock()
     elif admin_menu_input == ("q"):
+        console.print("[bold red]QUITTING THE APPLICATION...", justify='center')
+        time.sleep(4)
         clear_screen()
+        sys.exit()
 
 
 def clear_screen():
@@ -513,6 +561,10 @@ def clear_screen():
     """
     os.system('cls' if os.name == 'nt' else 'clear')
 
+
+def restart_app():
+    python = sys.executable
+    os.execl(python, python, *sys.argv)
 
 def app_name():
     console.print("[bold][red]iTAT - IT.ASSET.TRACKER", justify='center')
