@@ -106,7 +106,6 @@ The scope of the IT asset tracking application project encompasses the developme
    - Inventory Tracking: Provide real-time visibility into the current inventory of IT assets, including details such as asset type, quantity, location, status, and ownership.
    - Assignment and Allocation: Enable users to assign assets to staff members or departments, track asset allocations, and monitor usage patterns.
    - Check-in and Check-out: Support check-in and check-out processes for assets, allowing users to track the movement of assets within the organization.
-   - Reporting and Analytics: Generate reports and analytics dashboards to analyze asset utilization, identify trends, and make data-driven decisions.
 
 ## Design
 ### Wireframe
@@ -201,6 +200,8 @@ For future enhancements:
  - AUDIT TRAIL AND HISTORY
     - Maintain a detailed audit trail of all stock-related activities, including additions, assignments, modifications, and deletions.
     - History tracking provides accountability and helps identify discrepancies or issues in the inventory management process.
+- REPORTING AND ANALYTICS: Generate reports and analytics dashboards to analyze asset utilization, identify trends, and make data-driven decisions.
+
 ## Testing
 Complete details of testing is found on this [link](testing.md)
 
@@ -276,7 +277,6 @@ The IT asset tracker system is developed using the following technologies and pr
  - ***CSS (Cascading Style Sheets):*** CSS is used for styling the HTML elements, This was used to position, add background and colors to the application web page.
  - ***Rich library:*** Employed for enhancing the command-line interface with formatted text, including colors, styles, and tables, providing a more visually appealing and user-friendly experience.   
  
- Overall, the combination of Python, Google Sheets, Google Sheets API, and the Rich library enables the development of a robust IT asset tracker system with a user-friendly command-line interface for managing inventory effectively.
 ### Python Modules
 - ***Google OAuth2:*** Used for authentication and authorization to access Google Sheets API securely. This allows the application to access and manipulate spreadsheet data on behalf of the user.
 - ***sys:*** The sys module provides access to some variables used or maintained by the Python interpreter and to functions that interact with the interpreter. In the context of IT Asset Tracker, it was used for system-level operations such as handling command-line arguments or accessing system-specific information.
@@ -290,6 +290,8 @@ The IT asset tracker system is developed using the following technologies and pr
 - ***gspread:*** The gspread library is a Python wrapper for the Google Sheets API. It enables developers to interact with Google Sheets programmatically, allowing tasks such as reading/writing data to spreadsheets, formatting cells, or managing worksheets. In IT Asset Tracker, it was used to store and retrieve asset-related data in Google Sheets, providing a centralized and accessible storage solution.
 
 - ***re:*** The re module is Python's built-in regular expression library, which provides support for pattern matching and string manipulation using regular expressions. It allows you to search for specific patterns within strings, extract substrings, replace text, and perform various other text processing tasks based on user-defined patterns. In IT Asset Tracker, the re module was used for parsing and validating input data, extracting relevant information from text fields, or enforcing data format standards.
+
+Overall, the combination of Python, Google Sheets, Google Sheets API, and the Rich library enables the development of a robust IT asset tracker system with a user-friendly command-line interface for managing inventory effectively.
 
 ### User Defined Modules
  - [file_texts](https://github.com/hpcoloma/itat/blob/main/file_texts.py) was used to store long texts and ASCII arts.
